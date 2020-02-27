@@ -5,6 +5,7 @@ from xml.etree import ElementTree as et
 
 from .dragitem import DragItem
 from .dropzone import DropZone
+from .answer import Answer
 from .utils import cdata_str, estr
 
 
@@ -106,7 +107,29 @@ class Question(metaclass=ABCMeta):
         """
         This method converts current object to Moodle XML.
         """
-        pass
+        question = et.Element("question")
+        question.set("type", self._type)
+        name = et.SubElement(question, "name")
+        text = et.SubElement(name, "text")
+        text.text = str(self.name)
+
+        questiontext = et.SubElement(question, "questiontext", {"format": "html"})
+        text = et.SubElement(questiontext, "text")
+        text.text = cdata_str(self.question_text)
+
+        defaultgrade = et.SubElement(question, "defaultgrade")
+        defaultgrade.text = str(self.default_mark)
+
+        generalfeedback = et.SubElement(question, "generalfeedback", {"format": "html"})
+        text = et.SubElement(generalfeedback, "text")
+        text.text = cdata_str(self.general_feedback)
+
+        hidden = et.SubElement(question, "hidden")
+        hidden.text = "0"
+
+        idnumber = et.SubElement(question, "idnumber")
+        idnumber.text = estr(self.id_number)
+        return question
 
     @classmethod
     def is_instance_check(cls, obj):
@@ -171,28 +194,8 @@ class DragAndDropOntoImageQuestion(Question):
             self._dropzones.append(dropzone)
 
     def _to_xml_element(self):
-        question = et.Element("question")
-        question.set("type", self._type)
-        name = et.SubElement(question, "name")
-        text = et.SubElement(name, "text")
-        text.text = str(self.name)
 
-        questiontext = et.SubElement(question, "questiontext", {"format": "html"})
-        text = et.SubElement(questiontext, "text")
-        text.text = cdata_str(self.question_text)
-
-        defaultgrade = et.SubElement(question, "defaultgrade")
-        defaultgrade.text = str(self.default_mark)
-
-        generalfeedback = et.SubElement(question, "generalfeedback", {"format": "html"})
-        text = et.SubElement(generalfeedback, "text")
-        text.text = cdata_str(self.general_feedback)
-
-        hidden = et.SubElement(question, "hidden")
-        hidden.text = "0"
-
-        idnumber = et.SubElement(question, "idnumber")
-        idnumber.text = estr(self.id_number)
+        question = super(DragAndDropOntoImageQuestion, self)._to_xml_element()
 
         if self.shuffle:
             et.SubElement(question, "shuffleanswers")
@@ -246,8 +249,68 @@ class DragAndDropIntoTextQuestion(Question):
         """
         Currently not implemented.
         """
-        raise NotImplementedError
         super(DragAndDropIntoTextQuestion, self).__init__(*args, **kwargs)
+        raise NotImplementedError
 
     def _to_xml_element(self):
+        super(DragAndDropIntoTextQuestion, self)._to_xml_element()
         raise NotImplementedError
+
+
+class MultichoiceQuestion(Question):
+    """
+    This class represents multichoice question.
+    """
+    _type = "multichoice"
+    _allow_combined_feedback = True
+    _allow_multiple_tries = True
+
+    _answer_numbering = [
+        "none",
+        "abc",
+        "ABCD",
+        "123",
+        "iii",
+        "IIII"
+    ]
+
+    def __init__(self, answer_numbering="abc", *args, **kwargs):
+        super(MultichoiceQuestion, self).__init__(*args, **kwargs)
+        self.answer_numbering = answer_numbering
+        self.answers = []
+
+    def _to_xml_element(self):
+        question = super(MultichoiceQuestion, self)._to_xml_element()
+
+        for answer in self.answers:
+            question.append(answer._to_xml_element())
+
+        return question
+
+    def add_answer(self, answer):
+        self.answers.append(answer)
+
+
+class ShortAnswerQuestion(Question):
+    """
+    This class represents short answer question.
+    """
+
+    _type = "shortanswer"
+    _allow_combined_feedback = True
+    _allow_multiple_tries = True
+
+    def __init__(self, *args, **kwargs):
+        super(ShortAnswerQuestion, self, ).__init__(*args, **kwargs)
+        self.answers = []
+
+    def add_answer(self, answer):
+        self.answers.append(answer)
+
+    def _to_xml_element(self):
+        question = super(ShortAnswerQuestion, self)._to_xml_element()
+
+        for answer in self.answers:
+            question.append(answer._to_xml_element())
+
+        return question

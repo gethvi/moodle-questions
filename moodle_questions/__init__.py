@@ -1,4 +1,6 @@
-from .question import DragAndDropOntoImageQuestion, DragAndDropIntoTextQuestion
+from .question import DragAndDropOntoImageQuestion, DragAndDropIntoTextQuestion, MultichoiceQuestion, ShortAnswerQuestion
+
+from .answer import Answer
 
 from .dragitem import DragText, DragImage
 
