@@ -5,9 +5,8 @@ from xml.etree import ElementTree as et
 
 from .dragitem import DragItem
 from .dropzone import DropZone
-from .answer import Answer
 from .utils import cdata_str, estr
-
+from .answer import Answer
 
 class Question(metaclass=ABCMeta):
     """
@@ -305,6 +304,12 @@ class ShortAnswerQuestion(Question):
         self.answers = []
 
     def add_answer(self, answer):
+        """
+        Adds an answer to this question.
+
+        :type answer: Answer
+        :param answer: Answer object
+        """
         self.answers.append(answer)
 
     def _to_xml_element(self):
