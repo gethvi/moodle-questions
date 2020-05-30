@@ -1,7 +1,5 @@
 from xml.etree import ElementTree as et
 
-from .utils import cdata_str, estr
-
 
 class Answer:
 
@@ -20,3 +18,23 @@ class Answer:
         text.text = self.feedback
 
         return answer
+
+
+class Choice:
+
+    def __init__(self, text, group=1, unlimited=False):
+        self.text = text
+        self.group = group
+        self.unlimited = unlimited
+
+    def _to_xml_element(self):
+        dragbox = et.Element("dragbox")
+        text = et.SubElement(dragbox, "text")
+        text.text = self.text
+        group = et.SubElement(dragbox, "group")
+        group.text = str(self.group)
+
+        if self.unlimited:
+            unlimited = et.SubElement(dragbox, "infinite")
+
+        return dragbox

@@ -1,4 +1,4 @@
-from .question import Question
+from moodle_questions.questions.abstract.question import Question
 from xml.etree import ElementTree as et
 
 

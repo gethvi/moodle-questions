@@ -11,11 +11,11 @@ class DragItem(metaclass=ABCMeta):
     Abstract class representing any drag item.
     """
 
-    def __init__(self, text=None, group=1, unlimited=False):
+    def __init__(self, text=None, group=1, unlimited=False, number=None):
         self.text = text
         self.group = group
         self.unlimited = unlimited
-        self.number = None
+        self.number = number
 
     @abstractmethod
     def _to_xml_element(self):
@@ -87,3 +87,7 @@ class DragImage(DragItem):
             file.text = str(b64encode(f.read()), "utf-8")
 
         return dragimage
+
+
+class DragMarker(DragImage):
+    pass

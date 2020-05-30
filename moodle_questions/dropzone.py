@@ -7,7 +7,7 @@ class DropZone:
     This class represents DropZone for Questions like DragAndDropOntoImageQuestion.
     """
 
-    def __init__(self, x, y, text=None):
+    def __init__(self, x, y, text=None, choice=None, number=None, *args, **kwargs):
         """
         :type x: int
         :param x: Coordinate X from top left corner.
@@ -21,8 +21,8 @@ class DropZone:
         self.x = x
         self.y = y
         self.text = text
-        self.choice = None
-        self.number = None
+        self.choice = choice
+        self.number = number
 
     def _to_xml_element(self):
         dropzone = et.Element("drop")
