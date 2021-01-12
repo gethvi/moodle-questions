@@ -47,7 +47,7 @@ Current status of moodle-questions implementation:
 | Embedded Answers (Cloze Test / Gap Fill) |                    |
 | Multiple choice                          | :heavy_check_mark: |
 | Short Answer                             | :heavy_check_mark: |
-| Numerical                                |                    |
+| Numerical                                | :heavy_check_mark: |
 | Random short-answer matching             |                    |
 | Select missing words                     |                    | 
 | True/False                               |                    |

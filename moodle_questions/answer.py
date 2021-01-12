@@ -38,3 +38,24 @@ class Choice:
             unlimited = et.SubElement(dragbox, "infinite")
 
         return dragbox
+
+class NumericalAnswer(Answer):
+    """
+    This class represents a numerical answer.
+    This inherits the Answer class and the answer is still
+    a string.
+
+    This class additionally includes tolerance, currently only
+    the absolute tolerance can be specified via tol method 
+    when initializing.
+    """
+    def __init__(self, tol=0.1, *args, **kwargs):
+        super(NumericalAnswer, self).__init__(*args, **kwargs)
+        self.tolerance = tol
+
+    def _to_xml_element(self):
+        answer = super(NumericalAnswer, self)._to_xml_element()
+        tolerance = et.SubElement(answer, "tolerance")
+        tolerance.text = str(self.tolerance)
+
+        return answer
